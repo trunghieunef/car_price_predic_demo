@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dự đoán giá xe cũ</title>
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .prediction-form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+            grid-column: span 2;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .result-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .predicted-price {
+            font-size: 2.5rem;
+            color: #27ae60;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .price-unit {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>DỰ ĐOÁN GIÁ XE CŨ</h1>
+            <p class="description">Công cụ ước tính giá xe chính xác dựa trên các thông số kỹ thuật</p>
+        </header>
+
+        <div class="prediction-form">
+            <h2 class="form-title">Thông tin xe</h2>
+            <form id="carPredictionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="manufacturer">Hãng xe</label>
+                        <select id="manufacturer" required>
+                            <option value="">-- Chọn hãng xe --</option>
+                            <option value="Audi">Audi</option>
+                            <option value="BMW">BMW</option>
+                            <option value="ford">Ford</option>
+                            <option value="hyundi">hyundi</option>
+                            <option value="merc">Mercedes</option>
+                            <option value="toyota">Toyota</option>
+                            <option value="skoda">skoda</option>
+                            <option value="volkswagen">volkswagen</option>
+                            <option value="vauxhall">vauxhall</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="year">Năm sản xuất</label>
+                        <input type="number" id="year" min="1970" max="2024" placeholder="VD: 2018" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transmission">Hộp số</label>
+                        <select id="transmission" required>
+                            <option value="">-- Chọn loại hộp số --</option>
+                            <option value="manual">Số sàn</option>
+                            <option value="automatic">Số tự động</option>
+                            <option value="semi-auto">Bán tự động</option>
+                            <option value="Other">Khác</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mileage">Số km đã đi</label>
+                        <input type="number" id="mileage" min="0" placeholder="VD: 45000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fuelType">Loại nhiên liệu</label>
+                        <select id="fuelType" required>
+                            <option value="">-- Chọn nhiên liệu --</option>
+                            <option value="petrol">Xăng</option>
+                            <option value="diesel">Dầu diesel</option>
+                            <option value="hybrid">Hybrid</option>
+                            <option value="electric">Điện</option>
+                            <option value="Other">Khác</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tax">Thuế (USD)</label>
+                        <input type="number" id="tax" min="0" placeholder="VD: 145145">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mpg">Mức tiêu thụ nhiên liệu (mpg)</label>
+                        <input type="number" id="mpg" min="0" step="0.1" placeholder="VD: 45.6">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="engineSize">Dung tích động cơ (L)</label>
+                        <input type="number" id="engineSize" min="0" step="0.1" placeholder="VD: 1.8">
+                    </div>
+
+                    <button type="submit" class="btn">DỰ ĐOÁN GIÁ</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="result-section" id="resultSection" style="display: none;">
+            <h2 class="result-title">GIÁ XE DỰ ĐOÁN</h2>
+            <div class="predicted-price" id="predictedPrice">0</div>
+            <p class="price-unit">USD</p>
+        </div>
+
+        <footer>
+            <p>© 2025 Dự đoán giá xe cũ. Tất cả các quyền được bảo lưu.</p>
+            <p>Công cụ này chỉ mang tính chất tham khảo</p>
+        </footer>
+    </div> 
+<script>
+document.getElementById('carPredictionForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const data = {
+        manufacturer: document.getElementById('manufacturer').value,
+        year: document.getElementById('year').value,
+        transmission: document.getElementById('transmission').value,
+        mileage: document.getElementById('mileage').value,
+        fuelType: document.getElementById('fuelType').value,
+        tax: document.getElementById('tax').value,
+        mpg: document.getElementById('mpg').value,
+        engineSize: document.getElementById('engineSize').value
+    };
+
+    try {
+        const response = await fetch('/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.predicted_price) {
+            document.getElementById('predictedPrice').textContent = result.predicted_price.toLocaleString('vi-VN');
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert("Đã xảy ra lỗi: " + result.error);
+        }
+    } catch (error) {
+        alert("Lỗi kết nối máy chủ: " + error.message);
+    }
+});
+</script>
+
+</body>
+</html>
